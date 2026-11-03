@@ -1,0 +1,134 @@
+* { box-sizing: border-box; }
+
+:root {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: #fff;
+  --card: rgba(255, 255, 255, 0.16);
+  --card-border: rgba(255, 255, 255, 0.25);
+  --muted: rgba(255, 255, 255, 0.75);
+}
+
+body { margin: 0; min-height: 100vh; background: #1e3a5f; }
+button { font: inherit; cursor: pointer; }
+
+.app {
+  min-height: 100vh;
+  padding: 24px 16px 40px;
+  transition: background 0.8s ease;
+}
+.theme-clear  { background: linear-gradient(160deg, #3a8dde, #6cc3f5 60%, #f7d07a); }
+.theme-cloudy { background: linear-gradient(160deg, #5b7290, #8ea5bf); }
+.theme-rain   { background: linear-gradient(160deg, #2f4560, #557091); }
+.theme-storm  { background: linear-gradient(160deg, #1f2433, #44395e); }
+.theme-snow   { background: linear-gradient(160deg, #7f97b2, #c9d6e5); }
+.theme-night  { background: linear-gradient(160deg, #0b1630, #243b6b); }
+
+.container { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+main { display: flex; flex-direction: column; gap: 16px; transition: opacity 0.3s; }
+main.is-refreshing { opacity: 0.7; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 20px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+h1 { margin: 0; font-size: 1.8rem; }
+h2 { margin: 0 0 12px; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.muted { color: var(--muted); margin: 0; }
+
+/* Top bar */
+.topbar { display: flex; gap: 10px; align-items: flex-start; }
+.search { position: relative; flex: 1; min-width: 0; }
+.search-row { display: flex; gap: 8px; }
+.search-input {
+  flex: 1; display: flex; align-items: center; gap: 8px;
+  background: rgba(255, 255, 255, 0.92); color: #1b2a3a;
+  border-radius: 14px; padding: 0 14px; height: 46px;
+}
+.search-input input {
+  flex: 1; min-width: 0; border: 0; outline: 0; background: transparent;
+  font-size: 1rem; color: inherit;
+}
+.icon-btn, .units button {
+  height: 46px; border: 1px solid var(--card-border); background: var(--card);
+  color: #fff; border-radius: 14px; padding: 0 14px; font-size: 1.05rem;
+}
+.icon-btn:hover, .units button:hover { background: rgba(255, 255, 255, 0.28); }
+.units { display: flex; gap: 4px; }
+.units button.on { background: #fff; color: #1b2a3a; }
+
+.suggestions {
+  position: absolute; z-index: 10; top: 52px; left: 0; right: 0;
+  margin: 0; padding: 6px; list-style: none;
+  background: #fff; color: #1b2a3a; border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25); max-height: 340px; overflow-y: auto;
+}
+.suggestions li { padding: 10px 12px; border-radius: 10px; cursor: pointer; display: flex; flex-direction: column; }
+.suggestions li span { font-size: 0.85rem; color: #5b6b7c; }
+.suggestions li.active { background: #e8f1fb; }
+.suggestions .suggestions-label, .suggestions .suggestions-empty {
+  cursor: default; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: #8593a3; padding: 6px 12px;
+}
+
+/* Current */
+.current-main { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.temp { font-size: 5.5rem; font-weight: 200; line-height: 1; margin: 12px 0 4px; }
+.temp span { font-size: 1.8rem; vertical-align: top; margin-left: 4px; }
+.condition { font-size: 1.2rem; margin: 0 0 4px; }
+.current-icon { font-size: 7rem; line-height: 1; filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.2)); }
+.stats {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  margin: 20px 0 0; padding-top: 16px; border-top: 1px solid var(--card-border);
+}
+.stats dt { font-size: 0.75rem; color: var(--muted); }
+.stats dd { margin: 2px 0 0; font-weight: 600; }
+
+/* Hourly */
+.hourly { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; }
+.hour { flex: 0 0 64px; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 0; border-radius: 14px; font-size: 0.9rem; }
+.hour:first-child { background: rgba(255, 255, 255, 0.18); }
+.hour-icon { font-size: 1.6rem; }
+.rain { font-size: 0.75rem; color: #cfe8ff; }
+
+/* Daily */
+.daily { list-style: none; margin: 0; padding: 0; }
+.daily li {
+  display: grid; grid-template-columns: 56px 36px 56px 36px 1fr 36px;
+  align-items: center; gap: 10px; padding: 10px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+.daily li:first-child { border-top: 0; }
+.day-name { font-weight: 600; }
+.day-icon { font-size: 1.4rem; text-align: center; }
+.daily .muted { text-align: right; }
+.range { position: relative; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.2); }
+.range span { position: absolute; top: 0; bottom: 0; border-radius: 3px; background: linear-gradient(90deg, #8fd3ff, #ffd36b, #ff9a5a); }
+
+/* States */
+.loading { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 60px 0; color: var(--muted); }
+.error { background: rgba(200, 40, 40, 0.35); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.error button { background: #fff; color: #8b1d1d; border: 0; border-radius: 10px; padding: 6px 14px; }
+.spinner {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35); border-top-color: #fff;
+  animation: spin 0.8s linear infinite;
+}
+.spinner.small { width: 16px; height: 16px; border-color: #c5d1dd; border-top-color: #3a8dde; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+footer { text-align: center; font-size: 0.8rem; color: var(--muted); display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 4px; }
+footer a, .link { color: #fff; }
+.link { background: none; border: 0; padding: 0; text-decoration: underline; font-size: inherit; }
+.live-dot { width: 8px; height: 8px; border-radius: 50%; background: #5df28a; box-shadow: 0 0 0 0 rgba(93, 242, 138, 0.7); animation: pulse 2s infinite; margin-right: 4px; }
+@keyframes pulse { 70% { box-shadow: 0 0 0 8px rgba(93, 242, 138, 0); } 100% { box-shadow: 0 0 0 0 rgba(93, 242, 138, 0); } }
+
+@media (max-width: 560px) {
+  .temp { font-size: 4.2rem; }
+  .current-icon { font-size: 4.5rem; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .daily li { grid-template-columns: 48px 30px 44px 30px 1fr 30px; gap: 6px; }
+  .units button, .icon-btn { padding: 0 10px; }
+}
